@@ -203,4 +203,4 @@ Error from server ([denied by allowed-repos] container <nginx> has an invalid im
 
 
 !!! result
-    Policy controller is working!
+    `Nginx` deploymed has been blocked as it was deployed from Dockerhub and not via GCR. Our Policy controller  Policy is working as expected.
