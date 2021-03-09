@@ -154,7 +154,12 @@ kubectl get pods -n gatekeeper-system
 !!! result
     `gatekeeper-audit` and `gatekeeper-controller-manager` are running 
 
-
+**Output:**
+```
+NAME                                             READY   STATUS    RESTARTS   
+gatekeeper-audit-5f867bc644-xw7q6                1/1     Running   0          
+gatekeeper-controller-manager-57d8699bdc-dfxwl   1/1     Running   0          
+```
 
 
 **Step 8** (Optional) Craete Test Policy allow repo, that only allows to deploy from gcr.io
