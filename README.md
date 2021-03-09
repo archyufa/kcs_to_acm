@@ -65,7 +65,7 @@ kubectl get pods -n kube-system -w | grep config-management-operator
 
 
 !!! result
-As a result of this update Config Sync Image will be replaced by Config-management one via rolling upgrade.
+    As a result of this update Config Sync Image will be replaced by Config-management one via rolling upgrade.
 
 
 **Step 4** Verify that ACM Syncronzed with Git Repo
@@ -73,14 +73,14 @@ As a result of this update Config Sync Image will be replaced by Config-manageme
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Synced` for `Config sync status`
 
 
-CLI Method:
+(Optional) CLI Method:
 
 ```
 nomos status
 ```
 
 !!! result
-Output shows that cluster is `Synced`
+    Output shows that cluster is `Synced`
 
 **Output:** 
 ```
@@ -111,7 +111,7 @@ git push
 ```
 
 !!! result
-`test` Namepsaces has been created.
+    `test` Namepsaces has been created.
 
 
 
@@ -146,7 +146,18 @@ kubectl apply -f config-management.yaml
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Installled` for `Policy controller status`
 
 
-**Step 8** Craete Test Policy allow repo, that only allows to deploy from gcr.io
+```
+kubectl get pods -n gatekeeper-system
+```
+
+
+!!! result
+    `gatekeeper-audit` and `gatekeeper-controller-manager` are running 
+
+
+
+
+**Step 8** (Optional) Craete Test Policy allow repo, that only allows to deploy from gcr.io
 
 ```
 cd clusters
@@ -175,8 +186,7 @@ git commit "create test policy"
 git push
 ```
 
-**Step 9** Craete Test Policy `allow repo`, that only allows to deploy from gcr.io repo and block the rest
-
+**Step 9** (Optional) Deploy nginx container from `dockerhub`
 ```
 kubectl run nginx --image=nginx -n test
 ```
@@ -188,4 +198,4 @@ Error from server ([denied by allowed-repos] container <nginx> has an invalid im
 
 
 !!! result
-Policy controller is working!
+    Policy controller is working!
