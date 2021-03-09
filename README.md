@@ -2,7 +2,7 @@
 
 **Important:** This is not the official google documentatation and not supposed to be treated as such.
 
-## Comprison of Config with ACM
+## Comparison Config Sync vs ACM
 [Cofig Sync](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/overview) allows cluster operators to manage single clusters, multi-tenant clusters, and multi-cluster Kubernetes deployments using files, called configs, stored in a Git repository. It has following features:
     
     * Git-syncing functionality (Single, Multi, Unstructured repo's)
@@ -33,14 +33,14 @@ gcloud container hub memberships list
 ```
 
 
-Step 1 Enable Anthos Config Management by completing the following steps. 
+**Step 1** Enable Anthos Config Management by completing the following steps. 
 [Reference 1](https://cloud.google.com/anthos-config-management/docs/how-to/installing#enabling)
 
 ```
  gcloud alpha container hub config-management enable
 ```
 
-Step 2 Download ACM Operator
+**Step 2** Download ACM Operator
 [Reference 2](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync#configuring-config-sync)
 
 ```
@@ -51,7 +51,7 @@ Note: This will fetch the latest version of config-management-operator 1.6.2. If
 download it [here](https://cloud.google.com/anthos-config-management/downloads#v162)
 
 
-Step 3 Deploy ACM Operator
+**Step 3** Deploy ACM Operator
 [Reference 2](https://cloud.google.com/anthos-config-management/docs/how-to/installing-config-sync#configuring-config-sync)
 
 ```
@@ -68,7 +68,7 @@ kubectl get pods -n kube-system -w | grep config-management-operator
 As a result of this update Config Sync Image will be replaced by Config-management one via rolling upgrade.
 
 
-Step 4 Verify that ACM Syncronzed with Git Repo
+**Step 4** Verify that ACM Syncronzed with Git Repo
 
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Synced` for `Config sync status`
 
@@ -78,7 +78,6 @@ CLI Method:
 ```
 nomos status
 ```
-
 
 !!! result
 Output shows that cluster is `Synced`
@@ -91,7 +90,7 @@ Output shows that cluster is `Synced`
   SYNCED   fe46984e
 ```
 
-Step 5 Verify that new resources propogating to the Cluster.
+**Step 5** Verify that new resources propogating to the Cluster.
 
 Create a `test` namespace manifest resource in `namespace` folder of the Git Repo.
 
@@ -117,7 +116,7 @@ git push
 
 
 
-Step 6 Enable ACM Policy Configuration
+**Step 6** Enable ACM Policy Configuration
 [Reference 3](https://cloud.google.com/anthos-config-management/docs/how-to/installing-policy-controller#installing)
 
 
@@ -142,12 +141,12 @@ Apply configuraiton:
 kubectl apply -f config-management.yaml
 ```
 
-Step 6 Verify Gatekeeper Installation:
+**Step 7** Verify Gatekeeper Installation:
 
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Installled` for `Policy controller status`
 
 
-Step 7 Craete Test Policy allow repo, that only allows to deploy from gcr.io
+**Step 8** Craete Test Policy allow repo, that only allows to deploy from gcr.io
 
 ```
 cd clusters
@@ -170,7 +169,7 @@ EOF
 
 Commit code to github and wait for suncronization
 
-Step 7 Craete Test Policy `allow repo`, that only allows to deploy from gcr.io repo and block the rest
+**Step 9** Craete Test Policy `allow repo`, that only allows to deploy from gcr.io repo and block the rest
 
 ```
 kubectl run nginx --image=nginx -n test
