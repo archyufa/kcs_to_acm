@@ -169,6 +169,12 @@ EOF
 
 Commit code to github and wait for suncronization
 
+```
+git add .
+git commit "create test policy"
+git push
+```
+
 **Step 9** Craete Test Policy `allow repo`, that only allows to deploy from gcr.io repo and block the rest
 
 ```
