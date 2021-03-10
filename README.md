@@ -1,6 +1,6 @@
 # Config Sync to ACM Migration
 
-**Important:** This is not the official google documentatation and not supposed to be treated as such.
+**Important:** This is not the official google documentation and not supposed to be treated as such.
 
 ## Comparison Config Sync vs ACM
 [Cofig Sync](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/overview) allows cluster operators to manage single clusters, multi-tenant clusters, and multi-cluster Kubernetes deployments using files, called configs, stored in a Git repository. It has following features:
@@ -13,8 +13,8 @@
 [Anthos Config Management](https://cloud.google.com/anthos/config-management) (ACM) enables configuration + policy distribution and hierarchical policy enforcement for multi-tenant, multi-cluster Kubernetes deployments. It has following differences compare to Config Sync:
 
     * Installed via `config-management-operator.yaml` 
-    * Enables Policy Conrol over configurations
-    * Policy enforcement via Tested Gatekeeper Deplopyment 
+    * Enables Policy Control over configurations
+    * Policy enforcement via Tested Gatekeeper Deployment 
     * Provides catalog of Gatekeeper constraints
     * Requires a valid Anthos license
     * Can be installed and observed through Anthos UI
@@ -22,11 +22,10 @@
 
 ## Migration from Config Sync to ACM
 
-
 **Assumption 1:** It is assumed that Config Sync Operator has been deployed and ACM repository has been configured
-**Assumption 2:** It is assumed that GKE clusters has been registred in the [Anthos Hub](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#register_cluster) and shows status as `Synced`
+**Assumption 2:** It is assumed that GKE clusters has been registered in the [Anthos Hub](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#register_cluster) and shows status as `Synced`
 
-To verify if cluster already registred check Anthos UI or run following command:
+To verify if cluster already registered check Anthos UI or run following command:
 
 ```
 gcloud container hub memberships list
@@ -47,7 +46,7 @@ gcloud container hub memberships list
 gsutil cp gs://config-management-release/released/latest/config-management-operator.yaml config-management-operator.yaml
 ```
 
-Note: This will fetch the latest version of config-management-operator 1.6.2. If you need to use specifc version of ACM, please
+Note: This will fetch the latest version of config-management-operator 1.6.2. If you need to use specific version of ACM, please
 download it [here](https://cloud.google.com/anthos-config-management/downloads#v162)
 
 
@@ -68,7 +67,7 @@ kubectl get pods -n kube-system -w | grep config-management-operator
     As a result of this update Config Sync Image will be replaced by Config-management one via rolling upgrade.
 
 
-**Step 4** Verify that ACM Syncronzed with Git Repo
+**Step 4** Verify that ACM Synchronized with Git Repo
 
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Synced` for `Config sync status`
 
@@ -90,7 +89,7 @@ nomos status
   SYNCED   fe46984e
 ```
 
-**Step 5** Verify that new resources propogating to the Cluster.
+**Step 5** Verify that new resources propagating to the Cluster.
 
 Create a `test` namespace manifest resource in `namespace` folder of the Git Repo.
 
@@ -111,16 +110,16 @@ git push
 ```
 
 !!! result
-    `test` Namepsaces has been created.
+    `test` Namespaces has been created.
 
 
+## Enable ACM Policy Controller Configuration
 
-
-**Step 6** Enable ACM Policy Configuration
+**Step 1** Enable ACM Policy Configuration
 [Reference 3](https://cloud.google.com/anthos-config-management/docs/how-to/installing-policy-controller#installing)
 
 
-Update `config-management.yaml` with Policycontroller configuration for the migrated cluster
+Update `config-management.yaml` with Policy controller configuration for the migrated cluster
 
 ```
 # config-management.yaml
@@ -135,24 +134,25 @@ spec:
     enabled: true
 ```
 
-Apply configuraiton:
+Apply configuration:
 
 ```
 kubectl apply -f config-management.yaml
 ```
 
-**Step 7** Verify Gatekeeper Installation:
+**Step 2** Verify Gatekeeper Installation
+
+
+**UI Method:**
 
 In GCP UI go to Anthos -> Config Management -> Cluster, you should see that migrated cluster has status `Installled` for `Policy controller status`
 
 
+**kubectl method:**
+
 ```
 kubectl get pods -n gatekeeper-system
 ```
-
-
-!!! result
-    `gatekeeper-audit` and `gatekeeper-controller-manager` are running 
 
 **Output:**
 ```
@@ -162,10 +162,47 @@ gatekeeper-controller-manager-57d8699bdc-dfxwl   1/1     Running   0
 ```
 
 
-**Step 8** (Optional) Craete Test Policy allow repo, that only allows to deploy from gcr.io
+!!! result
+    `gatekeeper-audit` and `gatekeeper-controller-manager` are running 
+
+
+
+**gcloud method:**
+
+```
+gcloud alpha container hub config-management status \
+    --project=PROJECT_ID
+```
+
+**Output:**
+
+```
+Name                Status  Last_Synced_Token  Sync_Branch  Last_Synced_Time      Policy_Controller
+my-cluster  SYNCED  fe46984                     main         2021-03-10           INSTALLED
+```
+
+**Step 3** (Optional) Create Test Policy allow repo, that only allows to deploy from gcr.io
+
+If you used `nomos init` to create you Config Sync repo folder structure you should have something like similar folder tree view:
+
+```
+├── README.md
+├── cluster
+├── clusterregistry
+├── namespaces
+│   ├── namespace.yaml
+└── system
+    ├── README.md
+    └── repo.yaml
+```
+
+Policies can be stored in `cluster` folder so they can be applied cluster wide.
 
 ```
 cd clusters
+```
+
+```
 cat <<EOF > allowed-repos.yaml
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sAllowedRepos
@@ -183,7 +220,7 @@ spec:
 EOF
 ```
 
-Commit code to github and wait for suncronization
+Commit code to GitHub and wait for synchronization
 
 ```
 git add .
@@ -191,16 +228,18 @@ git commit "create test policy"
 git push
 ```
 
-**Step 9** (Optional) Deploy nginx container from `dockerhub`
+**Step 4** (Optional) Deploy nginx container from `dockerhub`
+
 ```
 kubectl run nginx --image=nginx -n test
 ```
 
 **Output:**
+
 ```
 Error from server ([denied by allowed-repos] container <nginx> has an invalid image repo <nginx>, allowed repos are ["gcr.io", "gke.gcr.io"]): admission webhook "validation.gatekeeper.sh" denied the request: [denied by allowed-repos] container <nginx> has an invalid image repo <nginx>, allowed repos are ["gcr.io", "gke.gcr.io"]
 ```
 
 
 !!! result
-    `Nginx` deploymed has been blocked as it was deployed from Dockerhub and not via GCR. Our Policy controller  Policy is working as expected.
+    `Nginx` deployed has been blocked as it was deployed from Docker hub and not via GCR. Our Policy controller  is working as expected.
