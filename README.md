@@ -3,14 +3,14 @@
 **Important:** This is not the official google documentation and not supposed to be treated as such.
 
 ## Comparison Config Sync vs ACM
-[Cofig Sync](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/overview) allows cluster operators to manage single clusters, multi-tenant clusters, and multi-cluster Kubernetes deployments using files, called configs, stored in a Git repository. It has following features:
+[Config Sync](https://cloud.google.com/kubernetes-engine/docs/add-on/config-sync/overview) allows cluster operators to manage single clusters, multi-tenant clusters, and multi-cluster Kubernetes deployments using files, called configs, stored in a Git repository. It has the following features:
     
     * Git-syncing functionality (Single, Multi, Unstructured repo's)
     * Hierarchy Controller (HNC)
     * Installed via `config-sync-operator.yaml`
     * Free tool for any GKE customer and intended to run on GKE
 
-[Anthos Config Management](https://cloud.google.com/anthos/config-management) (ACM) enables configuration + policy distribution and hierarchical policy enforcement for multi-tenant, multi-cluster Kubernetes deployments. It has following differences compare to Config Sync:
+[Anthos Config Management](https://cloud.google.com/anthos/config-management) (ACM) enables configuration + policy distribution and hierarchical policy enforcement for multi-tenant, multi-cluster Kubernetes deployments. It has the following differences compared to Config Sync:
 
     * Installed via `config-management-operator.yaml` 
     * Enables Policy Control over configurations
@@ -23,9 +23,10 @@
 ## Migration from Config Sync to ACM
 
 **Assumption 1:** It is assumed that Config Sync Operator has been deployed and ACM repository has been configured
-**Assumption 2:** It is assumed that GKE clusters has been registered in the [Anthos Hub](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#register_cluster) and shows status as `Synced`
 
-To verify if cluster already registered check Anthos UI or run following command:
+**Assumption 2:** It is assumed that GKE clusters have been registered in the [Anthos Hub](https://cloud.google.com/anthos/multicluster-management/connect/registering-a-cluster#register_cluster) and show status as `Synced`
+
+To verify if a cluster is already registered check Anthos UI or run the following command:
 
 ```
 gcloud container hub memberships list
@@ -89,7 +90,7 @@ nomos status
   SYNCED   fe46984e
 ```
 
-**Step 5** Verify that new resources propagating to the Cluster.
+**Step 5** Verify that new resources are propagating to the Cluster.
 
 Create a `test` namespace manifest resource in `namespace` folder of the Git Repo.
 
